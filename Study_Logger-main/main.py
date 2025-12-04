@@ -13,7 +13,6 @@ class HackingTracker(QMainWindow):
         self.setWindowTitle("Study Logger")
         self.setMinimumSize(800, 600)
         
-# font settings
         font_id = QFontDatabase.addApplicationFont("https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/ttf/JetBrainsMono-Regular.ttf")
         if font_id != -1:
             font_family = QFontDatabase.applicationFontFamilies(font_id)[0]
@@ -33,7 +32,6 @@ class HackingTracker(QMainWindow):
         self.conn = sqlite3.connect('tracker.db')
         self.cursor = self.conn.cursor()
         
-        # create sessions table if it doesn't exist
         self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS sessions (
                 id INTEGER PRIMARY KEY,
@@ -45,7 +43,7 @@ class HackingTracker(QMainWindow):
         self.conn.commit()
 
     def setup_ui(self):
-# Set dark theme
+
         self.setStyleSheet('''
             QMainWindow {
                 background-color: #0D0D0D;
@@ -93,26 +91,22 @@ class HackingTracker(QMainWindow):
             }
         ''')
 
-# central widget and layout
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QVBoxLayout(central_widget)
         layout.setSpacing(20)
         layout.setContentsMargins(30, 30, 30, 30)
 
-# display for timer
         self.time_label = QLabel("00:00:00")
         self.time_label.setFont(QFont("JetBrains Mono", 48))
         self.time_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.time_label)
 
-# time tracking (total)
         self.total_time_label = QLabel("Total Time: 0.00 hours")
         self.total_time_label.setFont(QFont("JetBrains Mono", 14))
         self.total_time_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.total_time_label)
 
-# Controls
         button_layout = QHBoxLayout()
         
         self.start_button = QPushButton("Start Session")
@@ -136,14 +130,13 @@ class HackingTracker(QMainWindow):
         self.is_tracking = True
         self.start_button.setText("Stop Session")
         self.session_start_time = datetime.now()
-        self.timer.start(1000)  # Update every second
+        self.timer.start(1000)  
 
     def stop_tracking(self):
         self.is_tracking = False
         self.start_button.setText("Start Session")
         self.timer.stop()
         
-# Save session to database
         end_time = datetime.now()
         duration = int((end_time - self.session_start_time).total_seconds())
         
@@ -190,7 +183,6 @@ class HackingTracker(QMainWindow):
             self.conn.commit()
             self.update_total_time()
 
-
 class TimeEntryDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -199,7 +191,6 @@ class TimeEntryDialog(QDialog):
         
         layout = QVBoxLayout(self)
         
-# buttons for add/remove
         radio_layout = QHBoxLayout()
         self.add_radio = QRadioButton("Add Time")
         self.remove_radio = QRadioButton("Remove Time")
@@ -207,14 +198,12 @@ class TimeEntryDialog(QDialog):
         radio_layout.addWidget(self.add_radio)
         radio_layout.addWidget(self.remove_radio)
         
-# group
         self.button_group = QButtonGroup()
         self.button_group.addButton(self.add_radio)
         self.button_group.addButton(self.remove_radio)
         
         layout.addLayout(radio_layout)
         
-# Hours input
         hours_layout = QHBoxLayout()
         hours_label = QLabel("Hours:")
         self.hours_spin = QSpinBox()
@@ -223,7 +212,6 @@ class TimeEntryDialog(QDialog):
         hours_layout.addWidget(self.hours_spin)
         layout.addLayout(hours_layout)
         
-  # Minutes input
         minutes_layout = QHBoxLayout()
         minutes_label = QLabel("Minutes:")
         self.minutes_spin = QSpinBox()
@@ -232,7 +220,6 @@ class TimeEntryDialog(QDialog):
         minutes_layout.addWidget(self.minutes_spin)
         layout.addLayout(minutes_layout)
         
-# add ok and cancel
         button_box = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | 
             QDialogButtonBox.StandardButton.Cancel
@@ -240,7 +227,6 @@ class TimeEntryDialog(QDialog):
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
         layout.addWidget(button_box)
-
 
 def main():
     app = QApplication(sys.argv)
